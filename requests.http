@@ -1,0 +1,34 @@
+### VIA CEP API - Exemplos de Requisições
+
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+### 1. Buscar CEP válido
+GET {{baseUrl}}/api/cep/01310-100
+
+### 2. Buscar CEP com formato numérico
+GET {{baseUrl}}/api/cep/01310100
+
+### 3. Buscar CEP inválido (não encontrado)
+GET {{baseUrl}}/api/cep/99999-999
+
+### 4. Buscar CEP com formato inválido (menos de 8 dígitos)
+GET {{baseUrl}}/api/cep/1234567
+
+### 5. Buscar CEP com formato inválido (mais de 8 dígitos)
+GET {{baseUrl}}/api/cep/123456789
+
+### 6. Validar CEP válido
+GET {{baseUrl}}/api/cep/validate/01310-100
+
+### 7. Validar CEP inválido
+GET {{baseUrl}}/api/cep/validate/00000-000
+
+### 8. Buscar outro CEP (Avenida Brasil, Rio de Janeiro)
+GET {{baseUrl}}/api/cep/20520-000
+
+### 9. Buscar CEP (Rua Senador Queiroz, São Paulo)
+GET {{baseUrl}}/api/cep/01310100
+
+### 10. Validar CEP em branco (erro esperado)
+GET {{baseUrl}}/api/cep/validate/
