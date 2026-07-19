@@ -1,85 +1,78 @@
 package com.example.api;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-class ViacepServiceTest {
+public class ViacepServiceTest {
 
     private final ViacepService viacepService = new ViacepService();
 
     @Test
-    @DisplayName("Deve lançar exceção quando CEP é vazio")
-    void testValidarCepVazio() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            viacepService.validarCep("");
-        });
-        assertEquals("CEP não pode ser vazio ou nulo.", exception.getMessage());
+    @DisplayName("CEP vazio deve ser inválido")
+    void testValidarCep_Vazio() {
+        assertFalse(viacepService.validarCep(""));
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando CEP é nulo")
-    void testValidarCepNulo() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            viacepService.validarCep(null);
-        });
-        assertEquals("CEP não pode ser vazio ou nulo.", exception.getMessage());
+    @DisplayName("CEP nulo deve ser inválido")
+    void testValidarCep_Nulo() {
+        assertFalse(viacepService.validarCep(null));
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando CEP tem menos de 8 dígitos")
-    void testValidarCepMenosDeOitoDigitos() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            viacepService.validarCep("1234567");
-        });
-        assertEquals("CEP deve ter exatamente 8 dígitos.", exception.getMessage());
+    @DisplayName("CEP com menos de 8 dígitos deve ser inválido")
+    void testValidarCep_MenosDeOitoDigitos() {
+        assertFalse(viacepService.validarCep("1234-567"));
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando CEP tem mais de 8 dígitos")
-    void testValidarCepMaisDeOitoDigitos() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            viacepService.validarCep("123456789");
-        });
-        assertEquals("CEP deve ter exatamente 8 dígitos.", exception.getMessage());
+    @DisplayName("CEP com mais de 8 dígitos deve ser inválido")
+    void testValidarCep_MaisDeOitoDigitos() {
+        assertFalse(viacepService.validarCep("123456789"));
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando CEP contém caracteres inválidos")
-    void testValidarCepCaracteresInvalidos() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            viacepService.validarCep("1234ABCD");
-        });
-        assertEquals("CEP contém caracteres inválidos.", exception.getMessage());
+    @DisplayName("CEP com caracteres inválidos deve ser inválido")
+    void testValidarCep_CaracteresInvalidos() {
+        assertFalse(viacepService.validarCep("12345-A67"));
     }
 
     @Test
-    @DisplayName("Deve aceitar CEP válido com hífen")
-    void testValidarCepValidoComHifen() {
+    @DisplayName("CEP com hífen deve ser válido")
+    void testValidarCep_ValidoComHifen() {
         assertTrue(viacepService.validarCep("12345-678"));
     }
 
     @Test
-    @DisplayName("Deve aceitar CEP válido sem hífen")
-    void testValidarCepValidoSemHifen() {
-        assertTrue(viacepService.validarCep("12345678"));
+    @DisplayName("CEP com espaços deve ser inválido")
+    void testValidarCep_ComEspacos() {
+        assertFalse(viacepService.validarCep("123 45-678"));
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando CEP contém espaços")
-    void testValidarCepComEspacos() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            viacepService.validarCep("12 345678");
-        });
-        assertEquals("CEP contém caracteres inválidos.", exception.getMessage());
+    @DisplayName("CEP válido simples deve ser válido")
+    void testValidarCep_ValidoSimples() {
+        assertTrue(viacepService.validarCep("98765-432"));
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando CEP contém múltiplos hífens")
-    void testValidarCepComMultiplosHifens() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            viacepService.validarCep("12--345678");
-        });
-        assertEquals("CEP contém caracteres inválidos.", exception.getMessage());
+    @DisplayName("CEP com múltiplos hífens deve ser inválido")
+    void testValidarCep_MultiploHifen() {
+        assertFalse(viacepService.validarCep("123--45-678"));
+    }
+
+    @Test
+    @DisplayName("CEP com caracteres especiais deve ser inválido")
+    void testValidarCep_CaracteresEspeciais() {
+        assertFalse(viacepService.validarCep("12345@678"));
+    }
+
+    @Test
+    @DisplayName("CEP com unicode/acentuação deve ser inválido")
+    void testValidarCep_Unicode() {
+        assertFalse(viacepService.validarCep("1234-5á6"));
     }
 }
