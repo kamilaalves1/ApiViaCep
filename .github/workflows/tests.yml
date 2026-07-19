@@ -1,0 +1,44 @@
+name: 🧪 CI - Testes e Cobertura
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Testes Unitários e Cobertura
+
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+
+    - name: ☕ Configurar Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: 🧪 Rodar testes unitários
+      run: mvn clean test -DskipITs=true
+
+    - name: 📊 Gerar relatório de cobertura
+      run: mvn jacoco:report
+
+    - name: 📈 Validar cobertura mínima (≥85%)
+      run: mvn jacoco:check
+
+    - name: 📤 Upload JaCoCo report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: jacoco-report
+        path: target/site/jacoco/
+        retention-days: 30
+
+    - name: ✅ Sucesso!
+      if: success()
+      run: echo "✓ Pipeline de testes passou!"
