@@ -3,11 +3,14 @@ package com.example.apiviacep;
 import com.example.apiviacep.controller.ProductController;
 import com.example.apiviacep.model.ProductResponse;
 import com.example.apiviacep.service.ProductService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -16,14 +19,21 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ProductController.class)
+@ExtendWith(MockitoExtension.class)
 public class ProductControllerTest {
 
-    @Autowired
+    @Mock
+    private ProductService productService;
+
+    @InjectMocks
+    private ProductController productController;
+
     private MockMvc mockMvc;
 
-    @MockBean
-    private ProductService productService;
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(productController).build();
+    }
 
     @Test
     void testGetProductsByLocation() throws Exception {
