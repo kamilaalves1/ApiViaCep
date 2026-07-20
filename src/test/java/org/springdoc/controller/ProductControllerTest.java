@@ -33,5 +33,17 @@ public class ProductControllerTest {
                .andExpect(status().isOk());
     }
 
+    @Test
+    public void testGetProductsByCep_Returns400_InvalidCep() throws Exception {
+        mockMvc.perform(get("/cep-teste-kamila?cep=12345"))
+               .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testGetProductsByCep_Returns400_EmptyCep() throws Exception {
+        mockMvc.perform(get("/cep-teste-kamila?cep="))
+               .andExpect(status().isBadRequest());
+    }
+
     // Adicione outros testes relevantes
 }
