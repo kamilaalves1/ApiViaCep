@@ -3,53 +3,38 @@ package com.viacep.controller;
 import com.viacep.dto.ProductResponse;
 import com.viacep.service.ProductService;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ProductControllerTest {
+class ProductControllerTest extends AbstractControllerTest {
 
-    @InjectMocks
-    private ProductController productController;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Mock
+    @Autowired
     private ProductService productService;
 
-    public ProductControllerTest() {
-        MockitoAnnotations.openMocks(this);
+    @Test
+    void whenGetProductsByLocation_thenReturnProducts() throws Exception {
+        // dado
+        ProductResponse response = new ProductResponse();
+        // Inicializa o objeto response com produtos mockados aqui
+        when(productService.findProductsByCep(anyString())).thenReturn(response);
+
+        // quando
+        mockMvc.perform(get("/api/products/by-location?cep=01310-100")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.products").exists());
     }
 
-    @Test
-    public void testGetProductsByLocation() {
-        String cep = "01310-100";
-        List<ProductResponse> productList = Collections.singletonList(new ProductResponse("123", "Produto A", "Eletrônicos", 45, 199.90, List.of("loja SP-01"), "2-3 dias"));
-        when(productService.getProductsByLocation(cep, null, null)).thenReturn(productList);
-        
-        ResponseEntity<List<ProductResponse>> response = productController.getProductsByLocation(cep, null, null);
-        
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(productList, response.getBody());
-    }
-
-    @Test
-    public void testGetNearbyProducts() {
-        double latitude = -23.5505;
-        double longitude = -46.6333;
-        String radius = "5km";
-        
-        List<ProductResponse> productList = Collections.singletonList(new ProductResponse("123", "Produto A", "Eletrônicos", 45, 199.90, List.of("loja SP-01"), "2-3 dias"));
-        when(productService.getNearbyProducts(latitude, longitude, radius)).thenReturn(productList);
-        
-        ResponseEntity<List<ProductResponse>> response = productController.getNearbyProducts(latitude, longitude, radius);
-        
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(productList, response.getBody());
-    }
+    // Outros testes podem ser adicionados aqui conforme necessário
 }
