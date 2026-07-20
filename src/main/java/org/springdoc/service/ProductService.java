@@ -8,6 +8,6 @@ public class ProductService {
 
     public ApiResponse<?> findProductsByCep(String cep) {
         // Lógica para buscar produtos pelo código postal.
-        return new ApiResponse<>(/* dados dos produtos encontrados */);
+        return new ApiResponse<>(null);
     }
 }
