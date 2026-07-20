@@ -5,17 +5,19 @@ import com.viacep.dto.ProductResponse;
 import com.viacep.exception.InvalidCepException;
 import com.viacep.exception.NotFoundException;
 import com.viacep.service.ProductService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @GetMapping("/api/products/by-location")
     public ResponseEntity<ApiResponse<ProductResponse>> getProductsByLocation(@RequestParam String cep) {
@@ -38,6 +40,6 @@ public class ProductController {
     }
 
     private boolean isCepValid(String cep) {
-        return cep.matches("\\d{5}-\\d{3}");
+        return cep.replaceAll("-", "").matches("\\d{8}");
     }
 }
