@@ -36,13 +36,14 @@ public class ProductControllerTest {
         InvalidCepException exception = assertThrows(InvalidCepException.class, () -> {
             productController.getProductsByLocation(invalidCep);
         });
-        assertEquals("Formato de CEP inválido", exception.getMessage());
+        assertEquals("CEP invalido: " + invalidCep, exception.getMessage());
     }
 
     @Test
     public void testGetProductsByLocation_WithNoProductsFound() {
         String cep = "12345-678";
-        when(productService.findProductsByCep(cep)).thenReturn(new ProductResponse());
+        ProductResponse emptyResponse = new ProductResponse();
+        when(productService.findProductsByCep(cep)).thenReturn(emptyResponse);
 
         NotFoundException exception = assertThrows(NotFoundException.class, () -> {
             productController.getProductsByLocation(cep);
