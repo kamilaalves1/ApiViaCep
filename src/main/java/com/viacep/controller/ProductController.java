@@ -26,7 +26,7 @@ public class ProductController {
         }
         var products = productService.findProductsByCep(cep);
         
-        if (products.isEmpty()) {
+        if (products.getProducts() == null || products.getProducts().isEmpty()) {
             throw new NotFoundException("Nenhum produto encontrado para o CEP informado.");
         }
         
