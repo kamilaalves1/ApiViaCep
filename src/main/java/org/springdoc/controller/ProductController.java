@@ -1,23 +1,29 @@
 package org.springdoc.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springdoc.response.ApiResponse; // Exemplo de como seria a classe wrapper para a resposta, caso exista
-import org.springdoc.exception.ProductNotFoundException; // Exceção customizada que você deve implementar
+import org.springdoc.exception.ProductNotFoundException;
+import org.springdoc.response.ApiResponse;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/cep-teste-kamila")
 public class ProductController {
 
+    private static final Pattern CEP_PATTERN = Pattern.compile("\\d{5}-\\d{3}|\\d{8}");
+
     @GetMapping
     public ApiResponse<?> getProductsByCep(@RequestParam String cep) {
+        if (!CEP_PATTERN.matcher(cep).matches()) {
+            throw new ProductNotFoundException("CEP inválido: " + cep);
+        }
+
         // Lógica para buscar produtos pelo código postal.
-        // Certifique-se de implementar a lógica real e lançar exceções onde apropriado
-        // Exemplo de resposta de sucesso
         return new ApiResponse<>(/* dados dos produtos encontrados */);
     }
 
-    // Implemente a lógica de tratamento de exceções conforme necessário
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ApiResponse<String> handleProductNotFoundException(ProductNotFoundException ex) {
+        return new ApiResponse<>(ex.getMessage());
+    }
 }
