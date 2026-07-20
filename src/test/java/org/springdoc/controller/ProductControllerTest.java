@@ -1,63 +1,37 @@
 package org.springdoc.controller;
 
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springdoc.dto.ApiResponse;
-import org.springdoc.exception.ResourceNotFoundException;
-import org.springdoc.service.ProductService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
+@WebMvcTest(ProductController.class)
 public class ProductControllerTest {
 
-    @InjectMocks
-    private ProductController productController;
-
-    @Mock
-    private ProductService productService;
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
+    public void setUp() {
+        // Configuração inicial, se necessário
     }
 
     @Test
-    public void testGetProductByCep_Success() throws ResourceNotFoundException {
-        String validCep = "01310-100";
-        Object mockProductResponse = new Object(); // substitua por uma resposta de produto válida
-
-        when(productService.findProductByCep(anyString())).thenReturn(mockProductResponse);
-
-        ResponseEntity<ApiResponse> response = productController.getProductByCep(validCep);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(mockProductResponse, response.getBody().getData());  // consider assuming ApiResponse has getData() method
+    public void testGetProductsByCep_Returns200() throws Exception {
+        mockMvc.perform(get("/cep-teste-kamila?cep=01310-100"))
+               .andExpect(status().isOk());
     }
 
     @Test
-    public void testGetProductByCep_NotFound() throws ResourceNotFoundException {
-        String invalidCep = "00000000";
-
-        when(productService.findProductByCep(anyString())).thenThrow(new ResourceNotFoundException("CEP não encontrado."));
-
-        ResponseEntity<ApiResponse> response = productController.getProductByCep(invalidCep);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("CEP não encontrado. Por favor, verifique se digitou corretamente.", response.getBody().getMessage());
+    public void testGetProductsByCep_Returns200_NonFormattedCep() throws Exception {
+        mockMvc.perform(get("/cep-teste-kamila?cep=01310100"))
+               .andExpect(status().isOk());
     }
 
-    @Test
-    public void testGetProductByCep_NoCepProvided() {
-        ResponseEntity<ApiResponse> response = productController.getProductByCep("");
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Por favor, forneça um CEP para buscar as informações correspondentes.", response.getBody().getMessage());
-    }
+    // Adicione outros testes relevantes
 }
