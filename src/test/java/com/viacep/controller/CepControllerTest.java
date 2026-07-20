@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -64,7 +65,8 @@ class CepControllerTest {
         mockMvc.perform(get("/api/cep/validate/{cep}", cep))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)))
-                .andExpect(jsonPath("$.data", is(true)));
+                .andExpect(jsonPath("$.data", is(true)))
+                .andExpect(jsonPath("$.message", is("CEP válido")));
     }
 
     @Test
@@ -76,6 +78,6 @@ class CepControllerTest {
         mockMvc.perform(get("/api/cep/validate/{cep}", cep))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success", is(false)))
-                .andExpect(jsonPath("$.data", is(false)));
+                .andExpect(jsonPath("$.error", is("CEP inválido")));
     }
 }
