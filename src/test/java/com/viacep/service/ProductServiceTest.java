@@ -1,11 +1,11 @@
 package com.viacep.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.viacep.dto.ProductResponse;
 import com.viacep.model.Product;
 import com.viacep.model.Store;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ProductServiceTest {
 
