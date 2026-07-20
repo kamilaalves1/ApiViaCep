@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +35,7 @@ public class ProductControllerTest {
         InvalidCepException exception = assertThrows(InvalidCepException.class, () -> {
             productController.getProductsByLocation(invalidCep);
         });
-        assertEquals("Formato de CEP inválido", exception.getMessage());
+        assertEquals("CEP invalido: 1234-567", exception.getMessage());
     }
 
     @Test
