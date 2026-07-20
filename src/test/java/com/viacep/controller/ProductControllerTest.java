@@ -42,8 +42,7 @@ public class ProductControllerTest {
     @Test
     public void testGetProductsByLocation_WithNoProductsFound() {
         String cep = "12345-678";
-        ProductResponse emptyResponse = new ProductResponse();
-        when(productService.findProductsByCep(cep)).thenReturn(emptyResponse);
+        when(productService.findProductsByCep(cep)).thenReturn(new ProductResponse());
 
         NotFoundException exception = assertThrows(NotFoundException.class, () -> {
             productController.getProductsByLocation(cep);
@@ -62,3 +61,4 @@ public class ProductControllerTest {
         assertEquals(productResponse, response.getBody().getData());
     }
 }
+
