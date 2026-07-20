@@ -1,36 +1,40 @@
 package com.viacep.controller;
 
-import com.viacep.model.ProductResponse;
-import com.viacep.service.ProductService;
+import com.viacep.dto.ApiResponse;
+import com.viacep.dto.ProductResponse;
 import com.viacep.exception.InvalidCepException;
 import com.viacep.exception.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.viacep.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/products")
+@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
 
-    @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
-
-    @GetMapping("/by-location")
-    public ResponseEntity<?> getProductsByCep(@RequestParam String cep) {
+    @GetMapping("/api/products/by-location")
+    public ResponseEntity<ApiResponse<ProductResponse>> getProductsByLocation(@RequestParam String cep) {
         if (!isCepValid(cep)) {
             throw new InvalidCepException("Formato de CEP inválido");
         }
-        var products = productService.findProductsByCep(cep);
+        
+        ProductResponse products = productService.findProductsByCep(cep);
         
         if (products.getProducts() == null || products.getProducts().isEmpty()) {
             throw new NotFoundException("Nenhum produto encontrado para o CEP informado.");
         }
         
-        return ResponseEntity.ok(products);
+        ApiResponse<ProductResponse> response = new ApiResponse<>();
+        response.setSuccess(true);
+        response.setData(products);
+        response.setMessage("Produtos encontrados com sucesso");
+
+        return ResponseEntity.ok(response);
     }
 
     private boolean isCepValid(String cep) {
