@@ -2,6 +2,7 @@ package com.viacep.controller;
 
 import com.viacep.dto.ApiResponse;
 import com.viacep.dto.EnderecoDto;
+import com.viacep.exception.CepInvalidoException;
 import com.viacep.service.ViacepService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +46,7 @@ public class CepController {
                     .message("CEP válido")
                     .build();
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
+        } catch (CepInvalidoException e) {
             ApiResponse<Boolean> response = ApiResponse.<Boolean>builder()
                     .success(false)
                     .data(false)
