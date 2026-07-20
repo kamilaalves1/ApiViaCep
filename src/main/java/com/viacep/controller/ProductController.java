@@ -1,24 +1,37 @@
 package com.viacep.controller;
 
-import com.viacep.dto.ProductResponse;
 import com.viacep.service.ProductService;
+import com.viacep.exception.InvalidCepException;
+import com.viacep.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
-    @GetMapping("/api/products/by-location")
-    public ResponseEntity<ProductResponse> getProductsByLocation(@RequestParam String cep) {
-        ProductResponse productResponse = productService.findProductsByCep(cep);
-        return ResponseEntity.ok(productResponse);
+    @Autowired
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
-    // Outros endpoints podem ser adicionados aqui conforme necessário
+    @GetMapping("/by-location")
+    public ResponseEntity<?> getProductsByCep(@RequestParam String cep) {
+        if (!isCepValid(cep)) {
+            throw new InvalidCepException("Formato de CEP inválido");
+        }
+        var products = productService.findProductsByCep(cep);
+        
+        if (products.isEmpty()) {
+            throw new NotFoundException("Nenhum produto encontrado para o CEP informado.");
+        }
+        
+        return ResponseEntity.ok(products);
+    }
+
+    private boolean isCepValid(String cep) {
+        return cep.matches("\\d{5}-\\d{3}");
+    }
 }
