@@ -1,65 +1,62 @@
 package com.viacep.controller;
 
-import com.viacep.model.ProductResponse;
-import com.viacep.service.ProductService;
+import com.viacep.dto.ApiResponse;
+import com.viacep.dto.ProductResponse;
 import com.viacep.exception.InvalidCepException;
 import com.viacep.exception.NotFoundException;
-import org.junit.jupiter.api.BeforeEach;
+import com.viacep.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
 public class ProductControllerTest {
-
-    @Mock
-    private ProductService productService;
 
     @InjectMocks
     private ProductController productController;
 
-    private MockMvc mockMvc;
+    @Mock
+    private ProductService productService;
 
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(productController).build();
+    @org.junit.jupiter.api.BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testGetProductsByCep_Success() throws Exception {
-        ProductResponse mockResponse = new ProductResponse();
-        when(productService.findProductsByCep(anyString())).thenReturn(mockResponse);
-
-        mockMvc.perform(get("/api/products/by-location?cep=01310-100"))
-                .andExpect(status().isOk());
+    public void testGetProductsByLocation_WithInvalidCep() {
+        String invalidCep = "1234-567";
+        InvalidCepException exception = assertThrows(InvalidCepException.class, () -> {
+            productController.getProductsByLocation(invalidCep);
+        });
+        assertEquals("Formato de CEP inválido", exception.getMessage());
     }
 
     @Test
-    void testGetProductsByCep_InvalidCep() throws Exception {
-        mockMvc.perform(get("/api/products/by-location?cep=12345"))
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> {
-                    throw new InvalidCepException("Formato de CEP inválido");
-                });
+    public void testGetProductsByLocation_WithNoProductsFound() {
+        String cep = "12345-678";
+        when(productService.findProductsByCep(cep)).thenReturn(new ProductResponse());
+
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            productController.getProductsByLocation(cep);
+        });
+        assertEquals("Nenhum produto encontrado para o CEP informado.", exception.getMessage());
     }
 
     @Test
-    void testGetProductsByCep_NotFound() throws Exception {
-        when(productService.findProductsByCep(anyString())).thenReturn(new ProductResponse()); // vazio
+    public void testGetProductsByLocation_Success() {
+        String cep = "12345-678";
+        ProductResponse productResponse = new ProductResponse();
+        when(productService.findProductsByCep(cep)).thenReturn(productResponse);
 
-        mockMvc.perform(get("/api/products/by-location?cep=01310-100"))
-                .andExpect(status().isNotFound())
-                .andExpect(result -> {
-                    throw new NotFoundException("Nenhum produto encontrado para o CEP informado.");
-                });
+        ResponseEntity<ApiResponse<ProductResponse>> response = productController.getProductsByLocation(cep);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(productResponse, response.getBody().getData());
     }
 }
