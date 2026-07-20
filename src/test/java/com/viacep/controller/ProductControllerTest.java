@@ -5,6 +5,7 @@ import com.viacep.dto.ProductResponse;
 import com.viacep.exception.InvalidCepException;
 import com.viacep.exception.NotFoundException;
 import com.viacep.service.ProductService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,7 +25,7 @@ public class ProductControllerTest {
     @Mock
     private ProductService productService;
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
