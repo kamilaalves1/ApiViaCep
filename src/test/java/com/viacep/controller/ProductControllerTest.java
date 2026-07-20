@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -35,16 +35,16 @@ public class ProductControllerTest {
     }
 
     @Test
-    void testGetProductsByLocation() throws Exception {
+    void testGetProductsByCep_Success() throws Exception {
         ProductResponse mockResponse = new ProductResponse();
-        when(productService.findProductsByLocation(anyString())).thenReturn(mockResponse);
+        when(productService.findProductsByCep(anyString())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/products/by-location?cep=01310-100"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void testGetProductsByLocation_InvalidCep() throws Exception {
+    void testGetProductsByCep_InvalidCep() throws Exception {
         mockMvc.perform(get("/api/products/by-location?cep=12345"))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> {
@@ -53,8 +53,8 @@ public class ProductControllerTest {
     }
 
     @Test
-    void testGetProductsByLocation_NotFound() throws Exception {
-        when(productService.findProductsByLocation(anyString())).thenReturn(new ProductResponse()); // vazio
+    void testGetProductsByCep_NotFound() throws Exception {
+        when(productService.findProductsByCep(anyString())).thenReturn(new ProductResponse()); // vazio
 
         mockMvc.perform(get("/api/products/by-location?cep=01310-100"))
                 .andExpect(status().isNotFound())
