@@ -23,27 +23,25 @@ public class ProductControllerTest {
 
     @Test
     public void testGetProductsByCep_Returns200() throws Exception {
-        mockMvc.perform(get("/cep-teste-kamila?cep=01310-100"))
+        mockMvc.perform(get("/api/cep-teste-kamila?cep=01310-100"))
                .andExpect(status().isOk());
     }
 
     @Test
     public void testGetProductsByCep_Returns200_NonFormattedCep() throws Exception {
-        mockMvc.perform(get("/cep-teste-kamila?cep=01310100"))
+        mockMvc.perform(get("/api/cep-teste-kamila?cep=01310100"))
                .andExpect(status().isOk());
     }
 
     @Test
     public void testGetProductsByCep_Returns400_InvalidCep() throws Exception {
-        mockMvc.perform(get("/cep-teste-kamila?cep=12345"))
+        mockMvc.perform(get("/api/cep-teste-kamila?cep=12345"))
                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void testGetProductsByCep_Returns400_EmptyCep() throws Exception {
-        mockMvc.perform(get("/cep-teste-kamila?cep="))
+        mockMvc.perform(get("/api/cep-teste-kamila?cep="))
                .andExpect(status().isBadRequest());
     }
-
-    // Adicione outros testes relevantes
 }
