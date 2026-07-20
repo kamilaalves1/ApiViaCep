@@ -1,37 +1,31 @@
 package com.viacep.controller;
 
+import com.viacep.dto.ProductResponse;
 import com.viacep.service.ProductService;
-import com.viacep.exception.InvalidCepException;
-import com.viacep.exception.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService productService;
 
-    @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
-    @GetMapping("/by-location")
-    public ResponseEntity<?> getProductsByCep(@RequestParam String cep) {
-        if (!isCepValid(cep)) {
-            throw new InvalidCepException("Formato de CEP inválido");
+    @GetMapping("/api/products/by-location")
+    public ResponseEntity<?> getProductsByLocation(@RequestParam String cep) {
+        try {
+            return ResponseEntity.ok(productService.findProductsByCep(cep));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("CEP inválido. Certifique-se de que o formato está correto.");
+        } catch (NoProductsFoundException e) {
+            return ResponseEntity.status(404).body("Nenhum produto encontrado para o CEP informado.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erro interno do servidor.");
         }
-        var products = productService.findProductsByCep(cep);
-        
-        if (products.isEmpty()) {
-            throw new NotFoundException("Nenhum produto encontrado para o CEP informado.");
-        }
-        
-        return ResponseEntity.ok(products);
-    }
-
-    private boolean isCepValid(String cep) {
-        return cep.matches("\\d{5}-\\d{3}");
     }
 }
