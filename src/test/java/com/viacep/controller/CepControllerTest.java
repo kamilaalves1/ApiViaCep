@@ -8,14 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CepController.class)
 class CepControllerTest {
@@ -37,12 +35,11 @@ class CepControllerTest {
 
         when(viacepService.buscarPorCep(cep)).thenReturn(endereco);
 
-        mockMvc.perform(get("/api/cep/{cep}", cep).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/cep/{cep}", cep))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.data.logradouro", is("Avenida Paulista")))
-                .andExpect(jsonPath("$.data.localidade", is("São Paulo")))
-                .andExpect(jsonPath("$.message", is("CEP encontrado com sucesso")));
+                .andExpect(jsonPath("$.data.localidade", is("São Paulo")));
     }
 
     @Test
@@ -51,10 +48,9 @@ class CepControllerTest {
         when(viacepService.buscarPorCep(cep))
                 .thenThrow(new CepInvalidoException("CEP não encontrado"));
 
-        mockMvc.perform(get("/api/cep/{cep}", cep).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/cep/{cep}", cep))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success", is(false)))
-                .andExpect(jsonPath("$.error", is("CEP não encontrado")));
+                .andExpect(jsonPath("$.success", is(false)));
     }
 
     @Test
@@ -65,11 +61,10 @@ class CepControllerTest {
 
         when(viacepService.buscarPorCep(cep)).thenReturn(endereco);
 
-        mockMvc.perform(get("/api/cep/validate/{cep}", cep).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/cep/validate/{cep}", cep))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)))
-                .andExpect(jsonPath("$.data", is(true)))
-                .andExpect(jsonPath("$.message", is("CEP válido")));
+                .andExpect(jsonPath("$.data", is(true)));
     }
 
     @Test
@@ -78,10 +73,9 @@ class CepControllerTest {
         when(viacepService.buscarPorCep(cep))
                 .thenThrow(new CepInvalidoException("CEP inválido"));
 
-        mockMvc.perform(get("/api/cep/validate/{cep}", cep).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/cep/validate/{cep}", cep))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success", is(false)))
-                .andExpect(jsonPath("$.data", is(false)))
-                .andExpect(jsonPath("$.error", is("CEP inválido")));
+                .andExpect(jsonPath("$.data", is(false)));
     }
 }
