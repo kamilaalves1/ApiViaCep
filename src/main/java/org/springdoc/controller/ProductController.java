@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.regex.Pattern;
 
 @RestController
-@RequestMapping("/cep-teste-kamila")
+@RequestMapping("/api/cep-teste-kamila")
 public class ProductController {
 
     private static final Pattern CEP_PATTERN = Pattern.compile("\\d{5}-\\d{3}|\\d{8}");
