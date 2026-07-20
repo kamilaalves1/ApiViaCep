@@ -2,34 +2,23 @@ package com.viacep.controller;
 
 import com.viacep.dto.ProductResponse;
 import com.viacep.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/products")
 public class ProductController {
-    
-    private final ProductService productService;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    @Autowired
+    private ProductService productService;
+
+    @GetMapping("/api/products/by-location")
+    public ResponseEntity<ProductResponse> getProductsByLocation(@RequestParam String cep) {
+        ProductResponse productResponse = productService.findProductsByCep(cep);
+        return ResponseEntity.ok(productResponse);
     }
 
-    @GetMapping("/by-location")
-    public ResponseEntity<List<ProductResponse>> getProductsByLocation(@RequestParam(required = false) String cep,
-                                                                      @RequestParam(required = false) String uf,
-                                                                      @RequestParam(required = false) String city) {
-        List<ProductResponse> products = productService.getProductsByLocation(cep, uf, city);
-        return ResponseEntity.ok(products);
-    }
-
-    @GetMapping("/nearby")
-    public ResponseEntity<List<ProductResponse>> getNearbyProducts(@RequestParam double latitude,
-                                                                  @RequestParam double longitude,
-                                                                  @RequestParam String radius) {
-        List<ProductResponse> products = productService.getNearbyProducts(latitude, longitude, radius);
-        return ResponseEntity.ok(products);
-    }
+    // Outros endpoints podem ser adicionados aqui conforme necessário
 }
