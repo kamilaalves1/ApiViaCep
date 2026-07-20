@@ -12,7 +12,7 @@ public class ProductController {
 
     private static final Pattern CEP_PATTERN = Pattern.compile("\\d{5}-\\d{3}|\\d{8}");
 
-    @GetMapping
+    @GetMapping("")
     public ApiResponse<?> getProductsByCep(@RequestParam String cep) {
         if (!CEP_PATTERN.matcher(cep).matches()) {
             throw new ProductNotFoundException("CEP inválido: " + cep);
