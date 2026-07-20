@@ -1,0 +1,16 @@
+com\example\apiviacep\model\ProductResponse.class
+com\viacep\dto\EnderecoDto.class
+com\viacep\exception\GlobalExceptionHandler.class
+com\viacep\exception\CepInvalidoException.class
+com\viacep\dto\ApiResponse$ApiResponseBuilder.class
+com\example\apiviacep\service\ProductService.class
+com\example\apiviacep\controller\ProductController.class
+com\viacep\controller\CepController.class
+com\viacep\config\RestTemplateConfig.class
+com\viacep\exception\ViacepException.class
+com\example\apiviacep\model\Location.class
+com\viacep\service\ViacepService.class
+com\viacep\ViacepApiApplication.class
+com\example\apiviacep\model\Store.class
+com\viacep\dto\ApiResponse.class
+com\example\apiviacep\model\Product.class

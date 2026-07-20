@@ -1,0 +1,3 @@
+com\example\apiviacep\ProductControllerTest.class
+com\viacep\service\ViacepServiceTest.class
+com\viacep\controller\CepControllerTest.class
