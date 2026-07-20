@@ -20,13 +20,13 @@ public class ProductController {
     }
 
     @GetMapping("/by-location")
-    public ResponseEntity<ProductResponse> getProductsByCep(@RequestParam String cep) {
+    public ResponseEntity<?> getProductsByCep(@RequestParam String cep) {
         if (!isCepValid(cep)) {
             throw new InvalidCepException("Formato de CEP inválido");
         }
-        ProductResponse products = productService.findProductsByLocation(cep);
+        var products = productService.findProductsByCep(cep);
         
-        if (products.getProducts().isEmpty()) {
+        if (products.getProducts() == null || products.getProducts().isEmpty()) {
             throw new NotFoundException("Nenhum produto encontrado para o CEP informado.");
         }
         
