@@ -1,9 +1,11 @@
 package com.viacep.controller;
 
+import com.viacep.model.ProductResponse;
 import com.viacep.service.ProductService;
 import com.viacep.exception.InvalidCepException;
 import com.viacep.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
