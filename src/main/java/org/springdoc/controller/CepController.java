@@ -18,16 +18,11 @@ public class CepController {
     }
 
     @GetMapping("/filter")
-    public ApiResponse<?> filterCep(
-            @RequestParam(required = false) String uf,
-            @RequestParam(required = false) String region,
-            @RequestParam(required = false) String city,
-            @RequestParam(required = false) String neighborhood,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "50") int size) {
-        return cepService.filterCep(uf, region, city, neighborhood, page, size);
+    public ApiResponse<?> filterCeps(@RequestParam String uf, @RequestParam(required = false) String city, 
+                                       @RequestParam(required = false) String region) {
+        return cepService.filterCeps(uf, city, region);
     }
-
+    
     @ExceptionHandler(ProductNotFoundException.class)
     public ApiResponse<String> handleProductNotFoundException(ProductNotFoundException ex) {
         return new ApiResponse<>(ex.getMessage());
